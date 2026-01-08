@@ -612,12 +612,21 @@ class CVMaker {
         button.disabled = true;
 
         try {
+            // Check if libraries are loaded
+            if (typeof window.html2canvas === 'undefined') {
+                throw new Error('html2canvas library not loaded');
+            }
+            if (typeof window.jspdf === 'undefined') {
+                throw new Error('jsPDF library not loaded');
+            }
+
             const element = document.getElementById('cvPreview');
             const canvas = await window.html2canvas(element, {
                 scale: 2,
                 useCORS: true,
                 allowTaint: true,
-                backgroundColor: '#ffffff'
+                backgroundColor: '#ffffff',
+                logging: false
             });
 
             const imgData = canvas.toDataURL('image/png');
@@ -648,7 +657,7 @@ class CVMaker {
             pdf.save(`${fileName.replace(/\s+/g, '_')}_CV.pdf`);
         } catch (error) {
             console.error('Error generating PDF:', error);
-            alert('Error generating PDF. Please try again.');
+            alert('Error generating PDF: ' + error.message + '\nPlease check the console for details.');
         } finally {
             button.textContent = originalText;
             button.disabled = false;
