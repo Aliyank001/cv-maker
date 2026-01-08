@@ -612,9 +612,15 @@ class CVMaker {
         button.disabled = true;
 
         try {
-            // Check if libraries are loaded
+            // Wait for libraries to be available
+            let retries = 0;
+            while ((!window.html2canvas || !window.jspdf) && retries < 50) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                retries++;
+            }
+
             if (typeof window.html2canvas === 'undefined') {
-                throw new Error('html2canvas library not loaded');
+                throw new Error('html2canvas library not loaded. Please refresh the page.');
             }
 
             const element = document.getElementById('cvPreview');
@@ -631,7 +637,7 @@ class CVMaker {
             // Get jsPDF from the global scope
             const jsPDF = window.jspdf?.jsPDF || window.jsPDF;
             if (!jsPDF) {
-                throw new Error('jsPDF library not loaded');
+                throw new Error('jsPDF library not loaded. Please refresh the page.');
             }
             
             const pdf = new jsPDF({
