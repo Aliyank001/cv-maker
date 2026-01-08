@@ -613,7 +613,7 @@ class CVMaker {
 
         try {
             const element = document.getElementById('cvPreview');
-            const canvas = await html2canvas(element, {
+            const canvas = await window.html2canvas(element, {
                 scale: 2,
                 useCORS: true,
                 allowTaint: true,
@@ -621,7 +621,8 @@ class CVMaker {
             });
 
             const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF.jsPDF({
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
                 format: 'a4'
