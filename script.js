@@ -616,9 +616,6 @@ class CVMaker {
             if (typeof window.html2canvas === 'undefined') {
                 throw new Error('html2canvas library not loaded');
             }
-            if (typeof window.jspdf === 'undefined') {
-                throw new Error('jsPDF library not loaded');
-            }
 
             const element = document.getElementById('cvPreview');
             const canvas = await window.html2canvas(element, {
@@ -630,7 +627,13 @@ class CVMaker {
             });
 
             const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
+            
+            // Get jsPDF from the global scope
+            const jsPDF = window.jspdf?.jsPDF || window.jsPDF;
+            if (!jsPDF) {
+                throw new Error('jsPDF library not loaded');
+            }
+            
             const pdf = new jsPDF({
                 orientation: 'portrait',
                 unit: 'mm',
